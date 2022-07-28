@@ -9,5 +9,12 @@ use Illuminate\Routing\Controller as BaseController;
 
 class Controller extends BaseController
 {
+     /**
+     * @OA\Info(
+     *     version="1.0",
+     *     title="Give Away Voucher to 1000 lucky customers"
+     * )
+     */
+    
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 }

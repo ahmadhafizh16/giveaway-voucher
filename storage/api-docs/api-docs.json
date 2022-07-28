@@ -1,0 +1,33 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Give Away Voucher to 1000 lucky customers",
+        "version": "1.0"
+    },
+    "paths": {
+        "/store/inventory": {
+            "get": {
+                "tags": [
+                    "store"
+                ],
+                "summary": "Returns pet inventories by status",
+                "description": "Returns a map of status codes to quantities",
+                "operationId": "getInventory",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key": []
+                    }
+                ]
+            }
+        }
+    },
+    "security": [
+        []
+    ]
+}
