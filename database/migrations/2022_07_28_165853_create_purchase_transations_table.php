@@ -25,6 +25,7 @@ return new class extends Migration
             $table->decimal('total_spent',10,2)->default(0);
             $table->decimal('total_saving',10,2)->default(0);
             $table->dateTime('transaction_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->index('transaction_at');
         });
     }
 

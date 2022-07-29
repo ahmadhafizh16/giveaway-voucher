@@ -10,6 +10,13 @@ class Voucher extends Model
 {
     use HasFactory;
 
+    protected $hidden = ['id'];
+
+    public function scopeUnbooked($query)
+    {
+        return $this->where('customer_id', null)->where('is_claimed',0);
+    }
+
     public function customer()
     {
         return $this->belongsTo(Customer::class,'customer_id');
