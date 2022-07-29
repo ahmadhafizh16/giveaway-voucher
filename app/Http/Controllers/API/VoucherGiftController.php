@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\EligibleCheckRequest;
 use App\Http\Requests\ValidatePhotoRequest;
+use App\Jobs\ResetVoucherOwnershipJob;
 use App\Services\PurchaseTransactionService;
 use App\Services\VoucherService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -24,8 +25,26 @@ class VoucherGiftController extends Controller
             $customerId = $request->customer_id;
 
             $customer = Customer::select(['id','first_name','last_name','email'])->findOrFail($customerId);
-
             $customerTransaction = $PTService->getPurchaseCountAndTotalSpent($customer);
+            $voucher = $VoucherService->customerHasVoucher($customer);
+
+            if($voucher){
+                return response()->json([
+                    'message' => 'This customer can participate! Please upload your photo before '.$voucher->updated_at->addMinutes(10),
+                    'data' => [
+                        'isEligible' => true,
+                        'transaction' => $customerTransaction,
+                        'customer' => $customer,
+                        'voucher' => $voucher
+                    ]
+                ], 200);
+            }
+
+            if(!$VoucherService->isVoucherAvailable()){
+                return response()->json([
+                    'message' => 'No voucher available !'
+                ], 403);
+            }
 
             if($customerTransaction['totalSpent'] < 300 || $customerTransaction['purchaseCount'] < 3)
             {
@@ -40,7 +59,11 @@ class VoucherGiftController extends Controller
 
             DB::beginTransaction();
             $voucher = $VoucherService->bindVoucherToCustomer($customer);
-            DB::commit(); 
+            DB::commit();
+
+            $delay = now()->addMinutes(1);
+
+            ResetVoucherOwnershipJob::dispatch($voucher)->delay($delay); 
         }
         catch(ModelNotFoundException $ex){
             return response()->json([
@@ -50,12 +73,12 @@ class VoucherGiftController extends Controller
         catch(\Throwable $ex){
             DB::rollback();
             return response()->json([
-                'message' => 'Something went wrong!'.$ex
+                'message' => 'Something went wrong!'
             ], 500);
         }
         
         return response()->json([
-            'message' => 'This customer can participate!',
+            'message' => 'This customer can participate! Please upload your photo before '.$delay,
             'data' => [
                 'isEligible' => true,
                 'transaction' => $customerTransaction,
