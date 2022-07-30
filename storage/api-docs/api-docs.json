@@ -5,25 +5,96 @@
         "version": "1.0"
     },
     "paths": {
-        "/store/inventory": {
-            "get": {
+        "/api/customer-check": {
+            "post": {
                 "tags": [
-                    "store"
+                    "customer check"
                 ],
-                "summary": "Returns pet inventories by status",
-                "description": "Returns a map of status codes to quantities",
-                "operationId": "getInventory",
-                "parameters": [],
+                "summary": "check if customer eligible for the event",
+                "description": "Return unclaimed voucher code",
+                "operationId": "checkCustomer",
+                "parameters": [
+                    {
+                        "name": "customer_id",
+                        "in": "query",
+                        "description": "Customer unique identifier",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "successful operation"
+                        "description": "Success booked voucher code or already have voucher code"
+                    },
+                    "403": {
+                        "description": "All voucher has been claimed or fully booked"
+                    },
+                    "404": {
+                        "description": "customer not found"
+                    },
+                    "422": {
+                        "description": "Validation error (customer_id needed) "
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                }
+            }
+        },
+        "/api/validate-photo": {
+            "post": {
+                "tags": [
+                    "validate photo"
+                ],
+                "summary": "Claim voucher by uploading product's photo",
+                "description": "This API will return claimed voucher code with customer data if success",
+                "operationId": "validatePhoto",
+                "parameters": [
+                    {
+                        "name": "customer_id",
+                        "in": "query",
+                        "description": "Customer unique identifier",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "photo": {
+                                        "nullable": false,
+                                        "type": "file"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
                     }
                 },
-                "security": [
-                    {
-                        "api_key": []
+                "responses": {
+                    "200": {
+                        "description": "Success claimed voucher code or already claimed voucher code"
+                    },
+                    "403": {
+                        "description": "Customer dont have voucher to claim or Image recognizition API fail"
+                    },
+                    "404": {
+                        "description": "customer not found"
+                    },
+                    "422": {
+                        "description": "Validation error (customer_id needed) "
+                    },
+                    "500": {
+                        "description": "Server Error"
                     }
-                ]
+                }
             }
         }
     },

@@ -19,10 +19,10 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         
-        Voucher::factory(100)->create();
+        Voucher::factory(1000)->create();
         echo "Voucher code generated !\n";
 
-        Customer::factory(200)->has(PurchaseTransaction::factory()->count(3))->create();
+        Customer::factory(3000)->has(PurchaseTransaction::factory()->count(3))->create();
         echo "Customer generated !\n";
 
         // \App\Models\User::factory()->create([
