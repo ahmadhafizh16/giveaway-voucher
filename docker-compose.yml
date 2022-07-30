@@ -2,6 +2,7 @@
 version: '3'
 services:
     vouchergift.test:
+        container_name: 'vouchergift'
         build:
             context: ./vendor/laravel/sail/runtimes/8.1
             dockerfile: Dockerfile
