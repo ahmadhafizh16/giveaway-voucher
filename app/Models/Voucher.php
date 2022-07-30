@@ -12,6 +12,10 @@ class Voucher extends Model
 
     protected $hidden = ['id'];
 
+    protected $casts = [
+        'is_claimed' => 'boolean'
+    ];
+
     public function scopeUnbooked($query)
     {
         return $this->where('customer_id', null)->where('is_claimed',0);

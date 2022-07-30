@@ -24,4 +24,11 @@ class VoucherService {
     public function isVoucherAvailable(){
         return Voucher::where('customer_id',null)->count() > 0 ? true : false;
     }
+
+    public function claimVoucher(Voucher $voucher){
+        $voucher->is_claimed = 1;
+        $voucher->save();
+        
+        return $voucher;
+    }
 }

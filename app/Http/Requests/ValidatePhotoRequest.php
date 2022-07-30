@@ -14,7 +14,8 @@ class ValidatePhotoRequest extends FormRequest
     public function rules()
     {
         return [
-            'photo' => ['required','image','size:2048']
+            'customer_id' => ['required','integer'],
+            'photo' => ['required','image']
         ];
     }
 }
